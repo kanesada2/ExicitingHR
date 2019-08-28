@@ -1,0 +1,34 @@
+name: ExcitingHR
+main: com.github.kanesada2.ExcitingHR.ExcitingHR
+version: 0.0.1
+api-version: 1.14
+softdepend: [SnowballGame]
+commands:
+    ExcitingHR:
+      description: Basic Function of ExcitingHR.
+      aliases: ehr
+permissions:
+    ExcitingHR.*:
+      description: Gives access to all ExctingHR commands
+      default: op
+      children:
+        ExcitingHR.config: true
+        ExcitingHR.replay: true
+        ExcitingHR.record: true
+        ExcitingHR.extract: true
+        ExcitingHR.infuse: true
+    ExcitingHR.config:
+      description: Allows you to reload ExctingHR's config
+      default: op
+    ExcitingHR.replay:
+      description: Allows you to replay your most recent batting.
+      default: true
+    ExcitingHR.record:
+      description: Allows you to record your most recent pitch into the ball in your main hand.
+      default: true
+    ExcitingHR.extract:
+      description: Allows you to record your most recent pitch into the ball in your main hand.
+      default: true
+    ExcitingHR.infuse:
+      description: Allows you to record your most recent pitch into the ball in your main hand.
+      default: true

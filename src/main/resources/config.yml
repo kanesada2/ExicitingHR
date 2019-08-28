@@ -1,0 +1,30 @@
+# ExcitingHR Config
+Replay:
+  Tracker: BARRIER
+Range: 100
+Min_Flight_Distance: 125
+Min_Vertical_Angle: 22
+Max_Vertical_Angle: 48
+Max_Horizontal_Angle: 40
+Server_Identifier: ExcitingHR
+MsgList:
+- CLEAR THE DECK!!
+- SEEEEEEEYA!!!
+- THAT BABY IS GONE!!
+- THERE SHE'S GONE!!
+- WAAAAAY BACK AND GONE!!!
+- SEE! YOU! LATER!!
+- OUTTA HERE!!!
+- 行くな!行くな!越えるな!
+- ゴー―!!ジーー!!ラーー!!
+- 痛烈!! 一閃!!
+- 今年の近鉄何かが起こった！！
+- インハイに…インハイに…
+- 生き返れ福留!!!
+- 悪夢のような現実がそこには待っていました。
+- 米野ガッポォー！（号泣）
+- これは悪い夢です!
+- 福浦の打球ライト後方ゥー!!
+- 大ホームランか!？どこまで行くんだ!？
+- イッツゴーン…ヌ!!
+- 白球は！木村拓也へ！思いよ届け！
