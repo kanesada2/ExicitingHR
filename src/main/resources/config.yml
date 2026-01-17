@@ -1,6 +1,6 @@
 # ExcitingHR Config
 Replay:
-  Tracker: BARRIER
+  Tracker: DRIPPING_LAVA
 Range: 100
 Min_Flight_Distance: 125
 Min_Vertical_Angle: 22

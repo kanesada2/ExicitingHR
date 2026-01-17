@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import com.github.kanesada2.SnowballGame.api.SnowballGameAPI;
+
 public class ExcitingHRCommandExecutor implements CommandExecutor, TabCompleter {
 
 	private ExcitingHR plugin;
@@ -31,9 +33,9 @@ public class ExcitingHRCommandExecutor implements CommandExecutor, TabCompleter 
 			if (args[0].length() == 0) {
 	            completions.add("replay");
 	            completions.add("reroad");
-	            completions.add("record");
-	            completions.add("extract");
-	            completions.add("infuse");
+	            //completions.add("record");
+	            //completions.add("extract");
+	            //completions.add("infuse");
 			}else {
 	            if ("replay".startsWith(args[0])) {
 	                completions.add("replay");
@@ -41,7 +43,7 @@ public class ExcitingHRCommandExecutor implements CommandExecutor, TabCompleter 
 	            if ("reroad".startsWith(args[0])) {
 	                completions.add("reroad");
 	            }
-	            if ("record".startsWith(args[0])) {
+	            /*if ("record".startsWith(args[0])) {
 	                completions.add("record");
 	            }
 	            if ("extract".startsWith(args[0])) {
@@ -49,10 +51,10 @@ public class ExcitingHRCommandExecutor implements CommandExecutor, TabCompleter 
 	            }
 	            if ("infuse".startsWith(args[0])) {
 	                completions.add("infuse");
-	            }
+	            }*/
 	        }
 		}else if(args.length == 2){
-			if(args[0].equalsIgnoreCase("infuse") && sender instanceof Player){
+			if(false && args[0].equalsIgnoreCase("infuse") && sender instanceof Player){
 				Player player = (Player)sender;
 				if(player.hasMetadata("extracted-props")){
 					completions.add(player.getMetadata("extracted-props").get(0).asString());
@@ -80,12 +82,12 @@ public class ExcitingHRCommandExecutor implements CommandExecutor, TabCompleter 
         }
 		switch(args.length){
 			case 0:
-				String [] msgs = new String[5];
+				String [] msgs = new String[2];
 				msgs[0] = "/ehr replay <true/false> " + ChatColor.YELLOW + " Replay <player>'s most recent batting.";
 				msgs[1] = "/ehr reload " + ChatColor.YELLOW + " reload ExcitingHR's config file. Only from console.";
-				msgs[2] = "/ehr record " + ChatColor.YELLOW + " record your most recent pitching to the ball in your main hand.";
-				msgs[3] = "/ehr extract" + ChatColor.YELLOW + " extract the record from the ball in your hand.";
-				msgs[4] = "/ehr infuse [record]" + " infuse the extracted record to the ball in your hand.";
+				//msgs[2] = "/ehr record " + ChatColor.YELLOW + " record your most recent pitching to the ball in your main hand.";
+				//msgs[3] = "/ehr extract" + ChatColor.YELLOW + " extract the record from the ball in your hand.";
+				//msgs[4] = "/ehr infuse [record]" + " infuse the extracted record to the ball in your hand.";
 				sender.sendMessage(msgs);
 				return true;
 			case 1:
@@ -103,7 +105,7 @@ public class ExcitingHRCommandExecutor implements CommandExecutor, TabCompleter 
 							return false;
 						}
 						return Util.Replay(player, false);
-					}else if(args[0].equalsIgnoreCase("record")){
+					}/*else if(args[0].equalsIgnoreCase("record")){
 						Player player = (Player)sender;
 						if(!player.hasPermission("ExcitingHR.record")){
 							sender.sendMessage("You don't have permission.");
@@ -114,7 +116,7 @@ public class ExcitingHRCommandExecutor implements CommandExecutor, TabCompleter 
 							return false;
 						}
 						ItemStack hand = player.getInventory().getItemInMainHand();
-						if(!com.github.kanesada2.SnowballGame.Util.isBall(hand)){
+						if(!SnowballGameAPI.isBallItem(hand)){
 							sender.sendMessage("Please send this command while holding a ball in your main hand.");
 							return false;
 						}
@@ -132,7 +134,7 @@ public class ExcitingHRCommandExecutor implements CommandExecutor, TabCompleter 
 						}
 
 						ItemStack hand = player.getInventory().getItemInMainHand();
-						if(!com.github.kanesada2.SnowballGame.Util.isBall(hand)){
+						if(!SnowballGameAPI.isBallItem(hand)){
 							sender.sendMessage("Please send this command while holding a ball in your main hand.");
 							return false;
 						}
@@ -150,7 +152,7 @@ public class ExcitingHRCommandExecutor implements CommandExecutor, TabCompleter 
 						player.setMetadata("extracted-props", new FixedMetadataValue(plugin, deflated));
 						sender.sendMessage("Successfully extracted! Please type "+ ChatColor.BOLD +  "/ehr infuse " + ChatColor.RESET + "then press TAB to copy it.");
 						return true;
-					}else{
+					}*/else{
 						sender.sendMessage("Unknown command. Please check /ehr");
 						return false;
 					}
@@ -171,14 +173,14 @@ public class ExcitingHRCommandExecutor implements CommandExecutor, TabCompleter 
 							ride = true;
 						}
 						return Util.Replay(player, ride);
-					}else if(args[0].equalsIgnoreCase("infuse")){
+					}/*else if(args[0].equalsIgnoreCase("infuse")){
 						if(!player.hasPermission("ExcitingHR.infuse")){
 							sender.sendMessage("You don't have permission.");
 							return false;
 						}
 
 						ItemStack hand = player.getInventory().getItemInMainHand();
-						if(!com.github.kanesada2.SnowballGame.Util.isBall(hand)){
+						if(!SnowballGameAPI.isBallItem(hand)){
 							sender.sendMessage("Please send this command while holding a ball in your main hand.");
 							return false;
 						}
@@ -195,7 +197,7 @@ public class ExcitingHRCommandExecutor implements CommandExecutor, TabCompleter 
 						Util.record(player.getDisplayName(), prop, hand);
 						sender.sendMessage("Successfully infused! Now this ball is contains the record!");
 						return true;
-					}else{
+					}*/else{
 						sender.sendMessage("Unknown command. Please check /ehr");
 						return false;
 					}

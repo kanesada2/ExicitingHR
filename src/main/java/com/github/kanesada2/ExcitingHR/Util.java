@@ -35,16 +35,6 @@ import com.github.kanesada2.SnowballGame.api.SnowballGameAPI;
 
 public final class Util {
 	 private Util() {}
-	 public static boolean isMyItem(ItemStack item){
-		 if(!item.hasItemMeta()){
-			 return false;
-		 }
-		 ItemMeta itemMeta = item.getItemMeta();
-		 return itemMeta.hasLore() && itemMeta.getLore().contains("SnowballGame Item");
-	 }
-	 public static boolean isBat(ItemStack item){
-		 return isMyItem(item) && item.getType() == Material.BOW;
-	 }
 
 	 public static boolean isRecordedBall(ItemStack item){
 		 if(!item.hasItemMeta()){
@@ -54,62 +44,6 @@ public final class Util {
 		 return itemMeta.hasLore() && itemMeta.getLore().contains("Recorded Ball");
 	 }
 
-	 public static ItemStack getBat(){
-		 ItemStack bat = new ItemStack(Material.BOW);
-		 ItemMeta batMeta = bat.getItemMeta();
-		 ((Damageable)batMeta).setDamage((short)384);
-		 batMeta.setUnbreakable(true);
-		 batMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-		 List<String> lore = new ArrayList<String>();
-		 lore.add("SnowballGame Item");
-		 lore.add("Bat");
-		 batMeta.setLore(lore);
-		 String name = SnowballGame.getPlugin(SnowballGame.class).getConfig().getString("Bat.Bat_Name");
-		 batMeta.setDisplayName(name);
-		 bat.setItemMeta(batMeta);
-		 return bat;
-	 }
-	 public static ItemStack getBall(String type){
-		 ItemStack ball = new ItemStack(Material.SNOWBALL);
-		 ItemMeta ballMeta = ball.getItemMeta();
-		 String name = SnowballGame.getPlugin(SnowballGame.class).getConfig().getString("Ball.Ball_Name");
-		 List<String> lore = new ArrayList<String>();
-		 lore.add("SnowballGame Item");
-		 lore.add("Ball");
-		 switch(type){
-			 case "highest":
-				 lore.add("Highest-repulsion");
-				 name = SnowballGame.getPlugin(SnowballGame.class).getConfig().getString("Ball.Repulsion.Highest");
-				 break;
-			 case "higher":
-				 lore.add("Higher-repulsion");
-				 name = SnowballGame.getPlugin(SnowballGame.class).getConfig().getString("Ball.Repulsion.Higher");
-				 break;
-			 case "lower":
-				 lore.add("Lower-repulsion");
-				 name = SnowballGame.getPlugin(SnowballGame.class).getConfig().getString("Ball.Repulsion.Lower");
-				 break;
-			 case "lowest":
-				 lore.add("Lowest-repulsion");
-				 name = SnowballGame.getPlugin(SnowballGame.class).getConfig().getString("Ball.Repulsion.Lowest");
-				 break;
-		 }
-		 ballMeta.setLore(lore);
-		 ballMeta.setDisplayName(name);
-		 ball.setItemMeta(ballMeta);
-		 return ball;
-	 }
-	 public static Particle getParticle(ConfigurationSection config){
-		 Particle particle = null;
-		 if(config.contains("Tracker")){
-			 try{
-				 particle =  Particle.valueOf(config.getString("Tracker"));
-			 }catch(IllegalArgumentException e){
-				 Bukkit.broadcastMessage("The value of Tracker : "+ config.getString("Tracker") + " is invalid!!");
-			 }
-		 }
-		 return particle;
-	 }
 
 	 public static boolean Replay(Player player, boolean doesRide){
 		 if(!(player.hasMetadata("hitLoc") && player.hasMetadata("vx") && player.hasMetadata("vy") && player.hasMetadata("vz") && player.hasMetadata("sx") && player.hasMetadata("sy") && player.hasMetadata("sz"))){
@@ -117,13 +51,13 @@ public final class Util {
 			 return false;
 		 }
 		 if(player.getGameMode() != GameMode.CREATIVE){
-			 if(!player.getInventory().containsAtLeast(Util.getBall("normal"),1)){
+			 if(!player.getInventory().containsAtLeast(SnowballGameAPI.getBallItem("Normal"),1)){
 				 player.sendMessage("You must have at least one normal-ball to send this command.");
 				 return false;
 			 }
 			 	ItemStack[] inventory = player.getInventory().getContents();
 				for(ItemStack item : inventory){
-					if(item != null && item.isSimilar(Util.getBall("normal"))){
+					if(item != null && item.isSimilar(SnowballGameAPI.getBallItem("Normal"))){
 						item.setAmount(item.getAmount() - 1);
 						break;
 					}
@@ -140,7 +74,7 @@ public final class Util {
 			 player.sendMessage("You are too far to see replay.");
 			 return false;
 		 }
-		 Projectile replay = SnowballGameAPI.launch(player, null, false, "normal", "batted", velocity, spinVector, acceleration, 0, Util.getParticle(plugin.getConfig().getConfigurationSection("Replay")), hitLoc, new Vector(0,0,0));
+		 Projectile replay = SnowballGameAPI.launch(player, null, false, "normal", "batted", velocity, spinVector, acceleration, 0, getParticle(plugin.getConfig().getConfigurationSection("Replay")), hitLoc, new Vector(0,0,0));
 		 replay.setMetadata("isReplay", new FixedMetadataValue(plugin, true));
 		 player.sendMessage("打ち出し角度: " + String.format("%.1f", vAngle) + "度");
 		 player.sendMessage("打球速度: " + String.format("%.1f", speed) + "km/h");
@@ -160,6 +94,9 @@ public final class Util {
 		 ItemMeta meta = ball.getItemMeta();
 		 meta.setDisplayName(ownerName + " " + new SimpleDateFormat().format(new Date()) + " " + ballName);
 		 List<String> lore = meta.getLore();
+		 if(!meta.hasLore()) {
+			lore = new ArrayList<String>();
+		 }
 		 lore.addAll(format4Lore(encoded, 20, "Recorded Ball", ";"));
 		 lore.addAll(format4Lore(ballName, 20, "Name:", "&"));
 		 meta.setLore(lore);
@@ -212,7 +149,10 @@ public final class Util {
 		 return loc.getDirection().normalize().multiply(length);
 	 }
 	 public static String[] getPropsFromBall(ItemStack ball){
-		 List<String> lore = ball.getItemMeta().getLore();
+		ItemMeta meta = ball.getItemMeta();
+		if(meta == null) return null;
+		if(!meta.hasLore()) return null;
+		List<String> lore = meta.getLore();
 		 String ballName = extractBySignifier(lore, "Name:", "&");
 		 String record = extractBySignifier(lore, "Recorded Ball", ";");
 		 record = record.substring(0, record.length() -1);
@@ -268,5 +208,17 @@ public final class Util {
 		  decompresser.end();
 
 		  return decompos.toString();
+	 }
+
+	 public static Particle getParticle(ConfigurationSection config){
+		 Particle particle = null;
+		 if(config.contains("Tracker")){
+			 try{
+				 particle =  Particle.valueOf(config.getString("Tracker"));
+			 }catch(IllegalArgumentException e){
+				 Bukkit.broadcastMessage("The value of " + config.getCurrentPath() +".Tracker : "+ config.getString("Particle") + " is invalid!!");
+			 }
+		 }
+		 return particle;
 	 }
 }

@@ -118,14 +118,14 @@ public class ExcitingHRListener implements Listener {
 	}
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPerform(PlayerDropItemEvent event){
-		if(!Util.isBat(event.getItemDrop().getItemStack())){
+		if(!SnowballGameAPI.isBatItem(event.getItemDrop().getItemStack())){
 			return;
 		}
 		event.getItemDrop().remove();
 		Player player = event.getPlayer();
 		ArmorStand dummy = (ArmorStand)player.getWorld().spawnEntity(player.getEyeLocation(), EntityType.ARMOR_STAND);
 		dummy.setVisible(false);
-		dummy.setItemInHand(Util.getBat());
+		dummy.setItemInHand(SnowballGameAPI.getBatItem());
 		dummy.setMarker(true);
 		Location eyeLoc = player.getEyeLocation();
 		if(player.getMainHand() == MainHand.RIGHT){
@@ -138,6 +138,7 @@ public class ExcitingHRListener implements Listener {
 		dummy.setVelocity(velocity);
 		new BatThrowTask(dummy,event.getItemDrop().getItemStack()).runTaskTimer(plugin, 0, 1);
 	}
+/* プラグインを跨ぐデバッグをやりたくない。機能をオミットする
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onRecordThrow(PlayerThrowBallEvent e){
@@ -153,7 +154,7 @@ public class ExcitingHRListener implements Listener {
 		Collection<Entity> entities = e.getPlayer().getNearbyEntities(50, 10, 50);
 		List<Entity> umpires = new ArrayList<Entity>();
 		for (Entity entity : entities) {
-			if(entity instanceof ArmorStand && com.github.kanesada2.SnowballGame.Util.isUmpire(((ArmorStand)entity).getBoots())){
+			if(entity instanceof ArmorStand && SnowballGameAPI.isUmpire((ArmorStand)entity)){
 				umpires.add(entity);
 			}
 		}
@@ -190,7 +191,7 @@ public class ExcitingHRListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onDispense(BlockDispenseEvent event){
-		if(!(event.getBlock().getType() == Material.DISPENSER && com.github.kanesada2.SnowballGame.Util.isBall(event.getItem()) && Util.isRecordedBall(event.getItem()))){
+		if(!(event.getBlock().getType() == Material.DISPENSER && SnowballGameAPI.isBallItem(event.getItem())) && Util.isRecordedBall(event.getItem())){
 			return;
 		}
 		String[] prop = Util.getPropsFromBall(event.getItem());
@@ -220,7 +221,7 @@ public class ExcitingHRListener implements Listener {
 		Collection<Entity> entities = projectile.getNearbyEntities(50, 10, 50);
 		List<Entity> umpires = new ArrayList<Entity>();
 		for (Entity entity : entities) {
-			if(entity instanceof ArmorStand && com.github.kanesada2.SnowballGame.Util.isUmpire(((ArmorStand)entity).getBoots())){
+			if(entity instanceof ArmorStand && SnowballGameAPI.isUmpire((ArmorStand)entity)){
 				umpires.add(entity);
 			}
 		}
@@ -269,7 +270,8 @@ public class ExcitingHRListener implements Listener {
 			tracker = Particle.valueOf(prop[7]);
 		}
 
-		Projectile ball = SnowballGameAPI.launch(source, null, true, from.getMetadata("ballType").get(0).asString(), ballName, velocity, spin, acceleration, random, tracker, rp, vModifier);
+		Projectile ball = SnowballGameAPI.launch(source, null, true, "Normal", ballName, velocity, spin, acceleration, random, tracker, rp, vModifier);
 		ball.setMetadata("isRecorded", new FixedMetadataValue(plugin, true));
 	}
+	*/
 }

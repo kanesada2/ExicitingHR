@@ -41,12 +41,12 @@
      <version>1.14.4-R0.1-SNAPSHOT</version>
      <scope>provided</scope>
     </dependency>
-   <dependency>
+  <dependency>
 	<groupId>SnowballGame</groupId>
-	<artifactId>SnowballGame</artifactId>
-	<version>v1</version>
-	<scope>system</scope>
-	<systemPath>${project.basedir}/libs/SnowballGame.jar</systemPath>
+    <artifactId>SnowballGame</artifactId>
+    <version>v1</version>
+    <scope>system</scope>
+    <systemPath>${project.basedir}/libs/SnowballGame.jar</systemPath>
 	</dependency>
  </dependencies>
 </project>
