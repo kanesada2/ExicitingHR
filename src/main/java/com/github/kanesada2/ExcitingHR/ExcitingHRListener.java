@@ -12,12 +12,14 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -28,6 +30,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.BlockProjectileSource;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
@@ -138,7 +141,6 @@ public class ExcitingHRListener implements Listener {
 		dummy.setVelocity(velocity);
 		new BatThrowTask(dummy,event.getItemDrop().getItemStack()).runTaskTimer(plugin, 0, 1);
 	}
-/* プラグインを跨ぐデバッグをやりたくない。機能をオミットする
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onRecordThrow(PlayerThrowBallEvent e){
@@ -199,25 +201,7 @@ public class ExcitingHRListener implements Listener {
 			return;
 		}
 		Dispenser from = (Dispenser)event.getBlock().getState();
-		from.setMetadata("ballProp", new FixedMetadataValue(plugin, prop));
-	}
-
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onDispenserThrow(BallThrownEvent event){
-		if(event.getEntity().hasMetadata("isRecorded")){
-			return;
-		}
-		Projectile projectile = (Projectile)event.getEntity();
-		if(!(projectile.getShooter() instanceof BlockProjectileSource)){
-			return;
-		}
-		BlockProjectileSource source = (BlockProjectileSource)projectile.getShooter();
-		Block from = source.getBlock();
-
-		if(!from.hasMetadata("ballProp")){
-			return;
-		}
-
+		Projectile projectile = (Projectile)event.getBlock().getWorld().spawnEntity(from.getLocation(), EntityType.SNOWBALL);
 		Collection<Entity> entities = projectile.getNearbyEntities(50, 10, 50);
 		List<Entity> umpires = new ArrayList<Entity>();
 		for (Entity entity : entities) {
@@ -247,7 +231,6 @@ public class ExcitingHRListener implements Listener {
 		}
 		targetLoc.setYaw((float) (targetLoc.getDirection().angle(u2p.clone().setY(0)) * 180 / Math.PI * yawSignum));
 
-		String[] prop = (String[])from.getMetadata("ballProp").get(0).value();
 		from.removeMetadata("ballProp", plugin);
 
 		String ballName = prop[0].replaceAll("<and>", "&");
@@ -270,8 +253,19 @@ public class ExcitingHRListener implements Listener {
 			tracker = Particle.valueOf(prop[7]);
 		}
 
-		Projectile ball = SnowballGameAPI.launch(source, null, true, "Normal", ballName, velocity, spin, acceleration, random, tracker, rp, vModifier);
+		Projectile ball = SnowballGameAPI.launch(from.getBlockProjectileSource(), null, true, "Normal", ballName, velocity, spin, acceleration, random, tracker, rp, vModifier);
 		ball.setMetadata("isRecorded", new FixedMetadataValue(plugin, true));
 	}
-	*/
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onDispenserThrow(BallThrownEvent event){
+		new BukkitRunnable(){
+			public void run(){
+				Projectile projectile = (Projectile)event.getEntity();
+				if(projectile.hasMetadata("isRecorded")) return;
+				if(!(projectile.getShooter() instanceof BlockProjectileSource)) return;
+				projectile.remove();
+			}
+		}.runTaskLater(plugin, 1);
+	}
 }
