@@ -255,6 +255,7 @@ public class ExcitingHRListener implements Listener {
 
 		Projectile ball = SnowballGameAPI.launch(from.getBlockProjectileSource(), null, true, "Normal", ballName, velocity, spin, acceleration, random, tracker, rp, vModifier);
 		ball.setMetadata("isRecorded", new FixedMetadataValue(plugin, true));
+		from.setMetadata("isRecorded", new FixedMetadataValue(plugin, true));
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -264,6 +265,9 @@ public class ExcitingHRListener implements Listener {
 				Projectile projectile = (Projectile)event.getEntity();
 				if(projectile.hasMetadata("isRecorded")) return;
 				if(!(projectile.getShooter() instanceof BlockProjectileSource)) return;
+				Dispenser dispenser = (Dispenser)((BlockProjectileSource)projectile.getShooter()).getBlock().getState();
+				if(!dispenser.hasMetadata("isRecorded")) return;
+				dispenser.removeMetadata("isRecorded", plugin);
 				projectile.remove();
 			}
 		}.runTaskLater(plugin, 1);
